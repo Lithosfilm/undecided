@@ -1,39 +1,91 @@
 import { useState, useEffect, useRef } from "react";
 
-const BOOKS = [
-  { id: "monte", title: "The Count of Monte Cristo", author: "Alexandre Dumas", year: 1844, genre: "Adventure", quote: "All human wisdom is contained in these two words: Wait and Hope.", description: "A wrongly imprisoned sailor returns as a wealthy count to exact elaborate revenge on his enemies.", img: "https://images.unsplash.com/photo-1534430480872-3498386e7856?w=1400&q=90" },
-  { id: "rouge", title: "Le Rouge et le Noir", author: "Stendhal", year: 1830, genre: "Psychological Drama", quote: "He was not wicked enough for the world, nor good enough for solitude.", description: "A young man of humble birth navigates ambition, love and hypocrisy in post-Napoleonic France.", img: "https://images.unsplash.com/photo-1520466809213-7b9a56adcd45?w=1400&q=90" },
-  { id: "anna", title: "Anna Karenina", author: "Tolstoy", year: 1878, genre: "Tragedy", quote: "All happy families are alike; each unhappy family is unhappy in its own way.", description: "A passionate affair tears apart the life of a Russian aristocrat trapped between love and society.", img: "https://images.unsplash.com/photo-1551292831-023188e78222?w=1400&q=90" },
-  { id: "crime", title: "Crime and Punishment", author: "Dostoevsky", year: 1866, genre: "Psychological Thriller", quote: "Pain and suffering are always inevitable for a large intelligence.", description: "A student commits murder to test a theory of moral superiority — and is destroyed by his own conscience.", img: "https://images.unsplash.com/photo-1519681393784-d120267933ba?w=1400&q=90" },
-  { id: "miserable", title: "Les Misérables", author: "Victor Hugo", year: 1862, genre: "Epic Drama", quote: "Even the darkest night will end and the sun will rise.", description: "An ex-convict's pursuit of redemption against the backdrop of revolutionary Paris.", img: "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=1400&q=90" },
-  { id: "gatsby", title: "The Great Gatsby", author: "F. Scott Fitzgerald", year: 1925, genre: "American Tragedy", quote: "So we beat on, boats against the current, borne back ceaselessly into the past.", description: "A mysterious millionaire's obsessive pursuit of a lost love in the glittering 1920s.", img: "https://images.unsplash.com/photo-1470813740244-df37b8c1edcb?w=1400&q=90" },
-  { id: "pride", title: "Pride and Prejudice", author: "Jane Austen", year: 1813, genre: "Romance", quote: "It is a truth universally acknowledged...", description: "Five sisters navigate marriage, money and misunderstanding in Regency England.", img: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=1400&q=90" },
-  { id: "bovary", title: "Madame Bovary", author: "Flaubert", year: 1857, genre: "Realist Drama", quote: "She wanted to die, but she also wanted to live in Paris.", description: "A doctor's wife seeks escape from provincial boredom through romantic fantasy and ruin.", img: "https://images.unsplash.com/photo-1490750967868-88df5691cc8e?w=1400&q=90" },
-  { id: "brothers", title: "The Brothers Karamazov", author: "Dostoevsky", year: 1880, genre: "Philosophical Drama", quote: "Beauty will save the world.", description: "Three brothers, a murdered father, and the darkest questions about God, free will and suffering.", img: "https://images.unsplash.com/photo-1516912481808-3406841bd33c?w=1400&q=90" },
-  { id: "war", title: "War and Peace", author: "Tolstoy", year: 1869, genre: "Epic", quote: "We can know only that we know nothing.", description: "Five aristocratic families live through Napoleon's invasion of Russia.", img: "https://images.unsplash.com/photo-1526481280693-3bfa7568e0f3?w=1400&q=90" },
-  { id: "jane", title: "Jane Eyre", author: "Charlotte Brontë", year: 1847, genre: "Gothic Romance", quote: "I am no bird; and no net ensnares me.", description: "A governess falls for her brooding employer — and uncovers the secret locked in his house.", img: "https://images.unsplash.com/photo-1505765050516-f72dcac9c60e?w=1400&q=90" },
-  { id: "wuthering", title: "Wuthering Heights", author: "Emily Brontë", year: 1847, genre: "Gothic Drama", quote: "Whatever our souls are made of, his and mine are the same.", description: "A destructive passion between a foundling and a girl of the moors spans two generations.", img: "https://images.unsplash.com/photo-1499678329028-101435549a4e?w=1400&q=90" },
-  { id: "pere", title: "Père Goriot", author: "Honoré de Balzac", year: 1835, genre: "Social Drama", quote: "The secret of great fortunes without apparent cause is a crime forgotten.", description: "A naive student discovers the brutal machinery of Parisian society through a devoted, ruined father.", img: "https://images.unsplash.com/photo-1508615039623-a25605d2b022?w=1400&q=90" },
-  { id: "great", title: "Great Expectations", author: "Charles Dickens", year: 1861, genre: "Coming of Age", quote: "I loved her against reason, against promise, against hope.", description: "An orphan boy's mysterious fortune transforms him — and tests who he truly is.", img: "https://images.unsplash.com/photo-1513836279014-a89f7a76ae86?w=1400&q=90" },
-  { id: "idiot", title: "The Idiot", author: "Dostoevsky", year: 1869, genre: "Tragedy", quote: "Beauty will save the world.", description: "A pure-hearted prince is destroyed by the corrupt society he tries to redeem.", img: "https://images.unsplash.com/photo-1534430480872-3498386e7856?w=1400&q=90" },
-  { id: "germinal", title: "Germinal", author: "Émile Zola", year: 1885, genre: "Social Drama", quote: "Men might die, but the idea would live on.", description: "A young miner leads a desperate strike in the coal fields of northern France.", img: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=1400&q=90" },
-  { id: "chartreuse", title: "The Charterhouse of Parma", author: "Stendhal", year: 1839, genre: "Political Drama", quote: "One can acquire everything in solitude except character.", description: "A young Italian nobleman chases glory, love and intrigue across Napoleonic Europe.", img: "https://images.unsplash.com/photo-1516483638261-f4dbaf036963?w=1400&q=90" },
-  { id: "oblomov", title: "Oblomov", author: "Ivan Goncharov", year: 1859, genre: "Psychological Comedy", quote: "His whole existence was made up of a morning that had not yet turned into a day.", description: "A Russian nobleman's magnificent, catastrophic inability to get out of bed.", img: "https://images.unsplash.com/photo-1504701954957-2010ec3bcec1?w=1400&q=90" },
-  { id: "demons", title: "Demons", author: "Dostoevsky", year: 1872, genre: "Political Thriller", quote: "If God does not exist, everything is permitted.", description: "A provincial town is infiltrated by revolutionary nihilists with terrifying consequences.", img: "https://images.unsplash.com/photo-1509023464722-18d996393ca8?w=1400&q=90" },
-  { id: "lys", title: "Le Lys dans la Vallée", author: "Honoré de Balzac", year: 1836, genre: "Romantic Drama", quote: "Love is the poetry of the senses.", description: "A young man's impossible love for a virtuous married woman destroys them both.", img: "https://images.unsplash.com/photo-1533669955142-6a73332af4db?w=1400&q=90" }
+// Period-accurate public domain paintings from Wikimedia Commons
+const HERO_IMAGES = [
+  "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/Camille_Corot_-_Souvenir_of_Mortefontaine_-_Google_Art_Project.jpg/1280px-Camille_Corot_-_Souvenir_of_Mortefontaine_-_Google_Art_Project.jpg",
+  "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Delacroix_-_Weislingen_Captured_by_G%C3%B6tz%27s_Men.jpg/1280px-Delacroix_-_Weislingen_Captured_by_G%C3%B6tz%27s_Men.jpg",
+  "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5b/Bouguereau_-_Nymphs_and_Satyr_-_1873.jpg/905px-Bouguereau_-_Nymphs_and_Satyr_-_1873.jpg",
+  "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/Mona_Lisa%2C_by_Leonardo_da_Vinci%2C_from_C2RMF_retouched.jpg/800px-Mona_Lisa%2C_by_Leonardo_da_Vinci%2C_from_C2RMF_retouched.jpg",
+  "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/Ingres%2C_J._A._D._-_Odalisque_with_Slave.jpg/1280px-Ingres%2C_J._A._D._-_Odalisque_with_Slave.jpg",
+  "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9d/Ilya_Efimovich_Repin_%281844-1930%29_-_Volga_Boatmen_%281870-1873%29.jpg/1280px-Ilya_Efimovich_Repin_%281844-1930%29_-_Volga_Boatmen_%281870-1873%29.jpg",
 ];
 
-const CINEMATIC_IMAGES = [
-  "https://images.unsplash.com/photo-1534430480872-3498386e7856?w=1800&q=95",
-  "https://images.unsplash.com/photo-1520466809213-7b9a56adcd45?w=1800&q=95",
-  "https://images.unsplash.com/photo-1551292831-023188e78222?w=1800&q=95",
-  "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=1800&q=95",
-  "https://images.unsplash.com/photo-1470813740244-df37b8c1edcb?w=1800&q=95",
-  "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=1800&q=95",
+const BOOKS = [
+  {
+    id: "monte", title: "The Count of Monte Cristo", author: "Alexandre Dumas", year: 1844,
+    genre: "Adventure & Revenge",
+    tagline: "Betrayed. Imprisoned. Reborn.",
+    description: "Edmond Dantès — sailor, lover, innocent man — is destroyed by the jealousy of three men. He will return as someone else entirely.",
+    quote: "All human wisdom is contained in these two words: Wait and Hope.",
+    color: "#8B1A1A",
+    painting: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Delacroix_-_Weislingen_Captured_by_G%C3%B6tz%27s_Men.jpg/1280px-Delacroix_-_Weislingen_Captured_by_G%C3%B6tz%27s_Men.jpg"
+  },
+  {
+    id: "rouge", title: "Le Rouge et le Noir", author: "Stendhal", year: 1830,
+    genre: "Psychological Drama",
+    tagline: "Ambition. Seduction. Ruin.",
+    description: "Julien Sorel burns with the fire of Napoleon's empire — born too late, too clever, too proud for the world he inhabits.",
+    quote: "He was not wicked enough for the world, nor good enough for solitude.",
+    color: "#1A1A4E",
+    painting: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/Camille_Corot_-_Souvenir_of_Mortefontaine_-_Google_Art_Project.jpg/1280px-Camille_Corot_-_Souvenir_of_Mortefontaine_-_Google_Art_Project.jpg"
+  },
+  {
+    id: "anna", title: "Anna Karenina", author: "Leo Tolstoy", year: 1878,
+    genre: "Tragedy",
+    tagline: "Love was the only crime.",
+    description: "She had everything society could offer. She threw it all away for one impossible feeling.",
+    quote: "All the variety, all the charm, all the beauty of life is made up of light and shadow.",
+    color: "#2A1A3E",
+    painting: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5b/Bouguereau_-_Nymphs_and_Satyr_-_1873.jpg/905px-Bouguereau_-_Nymphs_and_Satyr_-_1873.jpg"
+  },
+  {
+    id: "crime", title: "Crime and Punishment", author: "Fyodor Dostoevsky", year: 1866,
+    genre: "Psychological Thriller",
+    tagline: "He thought he was above it. He was wrong.",
+    description: "Raskolnikov believed extraordinary men stood beyond morality. One act of violence destroyed that theory forever.",
+    quote: "Pain and suffering are always inevitable for a large intelligence.",
+    color: "#1A1A1A",
+    painting: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9d/Ilya_Efimovich_Repin_%281844-1930%29_-_Volga_Boatmen_%281870-1873%29.jpg/1280px-Ilya_Efimovich_Repin_%281844-1930%29_-_Volga_Boatmen_%281870-1873%29.jpg"
+  },
+  {
+    id: "miserable", title: "Les Misérables", author: "Victor Hugo", year: 1862,
+    genre: "Epic Drama",
+    tagline: "One man. One loaf of bread. One lifetime of consequence.",
+    description: "Jean Valjean spent nineteen years in prison for stealing bread. What he became afterwards shook an empire.",
+    quote: "Even the darkest night will end and the sun will rise.",
+    color: "#1A2E1A",
+    painting: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/Ingres%2C_J._A._D._-_Odalisque_with_Slave.jpg/1280px-Ingres%2C_J._A._D._-_Odalisque_with_Slave.jpg"
+  },
+  {
+    id: "gatsby", title: "The Great Gatsby", author: "F. Scott Fitzgerald", year: 1925,
+    genre: "American Tragedy",
+    tagline: "He had everything. Except the one thing.",
+    description: "Jay Gatsby reinvented himself from nothing. He threw the greatest parties. He was the loneliest man in America.",
+    quote: "So we beat on, boats against the current, borne back ceaselessly into the past.",
+    color: "#1A2A3E",
+    painting: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/Mona_Lisa%2C_by_Leonardo_da_Vinci%2C_from_C2RMF_retouched.jpg/800px-Mona_Lisa%2C_by_Leonardo_da_Vinci%2C_from_C2RMF_retouched.jpg"
+  },
 ];
+
+const FALLBACK_SCENES = {
+  monte: {
+    header: "Part One — Marseille, France, 1815",
+    title: "The Return of the Pharaon",
+    opening: "He did not yet know that happiness, like light, casts a shadow.",
+    narration: "The harbour of Marseille glitters in the February sun as the Pharaon cuts through the water, its sails full, its young first mate standing at the bow with the certainty of a man for whom the world has just begun. Edmond Dantès is nineteen years old. He is about to be made captain. He is about to be married. He is, in this precise moment, the happiest man in France. Three men watch him disembark. Each of them has a reason to destroy him. None of them will hesitate.",
+    choicePrompt: "Edmond sees his enemies watching from the quay. What does he do?",
+    choices: [
+      { text: "He greets them warmly — he suspects nothing, trusts everyone, and his openness is his only flaw.", outcome: "a" },
+      { text: "He notices the envy in their eyes but dismisses it — a man with his future has no time for jealousy.", outcome: "b" },
+      { text: "He confronts Fernand directly — he has always been too honest for his own good.", outcome: "c" },
+      { text: "He follows Dumas' original path — carrying a letter he doesn't know will condemn him.", outcome: "original", original: true }
+    ]
+  }
+};
 
 export default function Undecided() {
   const [page, setPage] = useState("home");
+  const [featured, setFeatured] = useState(0);
   const [selectedBook, setSelectedBook] = useState(null);
   const [sceneIndex, setSceneIndex] = useState(0);
   const [currentScene, setCurrentScene] = useState(null);
@@ -44,36 +96,31 @@ export default function Undecided() {
   const [ending, setEnding] = useState(null);
   const [error, setError] = useState(null);
   const [bgIdx, setBgIdx] = useState(0);
-  const [prevBgIdx, setPrevBgIdx] = useState(null);
-  const [fading, setFading] = useState(false);
   const typeRef = useRef(null);
+  const bodyRef = useRef(null);
 
   useEffect(() => {
     const t = setInterval(() => {
-      setFading(true);
-      setTimeout(() => {
-        setPrevBgIdx(bgIdx);
-        setBgIdx(i => (i + 1) % CINEMATIC_IMAGES.length);
-        setFading(false);
-      }, 1000);
-    }, 6000);
+      setBgIdx(i => (i + 1) % HERO_IMAGES.length);
+      setFeatured(i => (i + 1) % BOOKS.length);
+    }, 7000);
     return () => clearInterval(t);
-  }, [bgIdx]);
+  }, []);
 
-  function typewrite(text, onDone) {
+  function typewrite(text) {
     setDisplayedText("");
     setShowChoices(false);
     let i = 0;
     clearInterval(typeRef.current);
     typeRef.current = setInterval(() => {
-      i++;
+      i += 2;
       setDisplayedText(text.slice(0, i));
       if (i >= text.length) {
         clearInterval(typeRef.current);
-        setTimeout(() => setShowChoices(true), 800);
-        if (onDone) onDone();
+        setDisplayedText(text);
+        setTimeout(() => setShowChoices(true), 600);
       }
-    }, 22);
+    }, 18);
   }
 
   async function callClaude(prompt) {
@@ -84,13 +131,13 @@ export default function Undecided() {
         body: JSON.stringify({ prompt })
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "API error");
+      if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
       const text = data.content?.[0]?.text || "";
       const match = text.match(/\{[\s\S]*\}/);
-      if (!match) throw new Error("No JSON in response");
+      if (!match) throw new Error("No JSON found");
       return JSON.parse(match[0]);
     } catch (e) {
-      console.error(e);
+      console.error("Claude error:", e.message);
       return null;
     }
   }
@@ -106,23 +153,22 @@ export default function Undecided() {
     setDisplayedText("");
     setShowChoices(false);
     setLoading(true);
+    if (bodyRef.current) bodyRef.current.scrollTop = 0;
 
-    const scene = await callClaude(`You are the narrator of a Hollywood-quality cinematic adaptation of "${book.title}" by ${book.author} (${book.year}).
+    const scene = await callClaude(`You are narrating a Hollywood-quality cinematic adaptation of "${book.title}" by ${book.author} (${book.year}). Think Pierre Niney in Monte Cristo — dramatic, visual, emotionally immediate.
 
-Write the opening of this film — the first scene that would appear on screen. Cinematic, vivid, psychologically rich. Think Pierre Niney in The Count of Monte Cristo — dramatic, visual, emotionally immediate. Never dumbed down.
-
-Return ONLY valid JSON with no markdown backticks:
+Write the opening scene. Return ONLY valid JSON, absolutely no markdown or backticks:
 {
-  "header": "Part One — [setting, year]",
-  "title": "[evocative scene title, 3-5 words]",
-  "opening": "[A single powerful line that appears on screen first, like a film title card]",
-  "narration": "[The cinematic narration — 5-6 sentences. Written to be READ ON SCREEN like a voiceover. Vivid. Dramatic. Each sentence lands like a cut in a film. Present tense. Psychologically intense. True to ${book.author}'s world.]",
-  "choicePrompt": "[The dramatic question this moment raises for the audience]",
+  "header": "Part One — [exact setting and year]",
+  "title": "[3-5 word evocative scene title]",
+  "opening": "[One devastating opening line. Like a title card in a great film. Under 20 words.]",
+  "narration": "[5-6 sentences of cinematic narration written as voiceover. Present tense. Vivid physical detail. Psychologically devastating. True to ${book.author}'s world. Each sentence is a cut.]",
+  "choicePrompt": "[One urgent question that captures the exact dramatic fork in this moment]",
   "choices": [
-    {"text": "[Choice A — specific action, 1-2 sentences]", "outcome": "a"},
-    {"text": "[Choice B — contrasting action]", "outcome": "b"},
-    {"text": "[Choice C — unexpected path]", "outcome": "c"},
-    {"text": "[${book.author}'s original path — what actually happens in the novel]", "outcome": "original", "original": true}
+    {"text": "[Specific action, 1-2 sentences, psychologically motivated]", "outcome": "a"},
+    {"text": "[Contrasting action with different psychology]", "outcome": "b"},
+    {"text": "[Unexpected third path]", "outcome": "c"},
+    {"text": "[Exactly what ${book.author} wrote — faithful to the original novel]", "outcome": "original", "original": true}
   ]
 }`);
 
@@ -131,7 +177,13 @@ Return ONLY valid JSON with no markdown backticks:
       setCurrentScene(scene);
       typewrite(scene.narration);
     } else {
-      setError("Could not connect. Please check that your Anthropic API key is correctly set in Vercel → Settings → Environment Variables, then redeploy.");
+      const fallback = FALLBACK_SCENES[book.id];
+      if (fallback) {
+        setCurrentScene(fallback);
+        typewrite(fallback.narration);
+      } else {
+        setError("API connection failed. Go to Vercel → undecided-rib3 → Settings → Environment Variables and verify your ANTHROPIC_API_KEY starts with sk-ant-, then redeploy.");
+      }
     }
   }
 
@@ -141,36 +193,34 @@ Return ONLY valid JSON with no markdown backticks:
     const nextIndex = sceneIndex + 1;
     setError(null);
     setShowChoices(false);
-    setDisplayedText("");
     setCurrentScene(null);
+    setDisplayedText("");
 
     if (nextIndex >= 4) {
       setLoading(true);
-      const end = await callClaude(`You are concluding a cinematic adaptation of "${selectedBook.title}" by ${selectedBook.author}.
-Reader's path: ${newChoices.join(" → ")}
-Write a final scene — 5 sentences, like the closing frames of a great film. Haunting. Specific to this path. End with one line that captures the novel's deepest truth.
-Return ONLY JSON: {"endingTitle": "[3-4 word poetic title]", "endingText": "[the final scene narration]"}`);
+      const end = await callClaude(`Conclude this cinematic adaptation of "${selectedBook.title}" by ${selectedBook.author}.
+Path taken: ${newChoices.join(" → ")}
+Write the final scene — 5 sentences, like closing frames of a great film. Haunting. Specific. End on the novel's deepest truth.
+Return ONLY JSON: {"endingTitle": "[3-4 word title]", "endingText": "[final narration]"}`);
       setLoading(false);
-      setEnding(end || { endingTitle: "The Story Ends", endingText: "Every great novel contains multitudes. You have walked one path through it. The others wait." });
+      setEnding(end || { endingTitle: "Fin", endingText: "Every path through a great novel leads somewhere true. You have walked yours." });
       return;
     }
 
     setSceneIndex(nextIndex);
     setLoading(true);
 
-    const next = await callClaude(`You are narrating scene ${nextIndex + 1} of 4 in a cinematic adaptation of "${selectedBook.title}" by ${selectedBook.author}.
-Reader's choices so far: ${newChoices.join(" → ")}
+    const next = await callClaude(`Write scene ${nextIndex + 1} of 4 in a cinematic adaptation of "${selectedBook.title}" by ${selectedBook.author}.
+Choices so far: ${newChoices.join(" → ")}
 Last choice: "${choice.text}"
-
-Continue the story cinematically. Show the immediate consequences of the choice. Maintain dramatic momentum. Stay true to ${selectedBook.author}'s psychological depth.
-
-Return ONLY valid JSON with no markdown:
+Show consequences. Maintain ${selectedBook.author}'s psychological depth. Present tense. Cinematic.
+Return ONLY valid JSON, no markdown:
 {
   "header": "[Part — setting]",
   "title": "[scene title]",
-  "opening": "[a powerful single line that opens this scene]",
-  "narration": "[5-6 sentences of cinematic voiceover narration. Present tense. Vivid. Dramatically immediate. React to the choice made.]",
-  "choicePrompt": "[The dramatic question this moment raises]",
+  "opening": "[devastating opening line, under 20 words]",
+  "narration": "[5-6 sentences of cinematic voiceover reacting to the choice made]",
+  "choicePrompt": "[urgent dramatic question]",
   "choices": [
     {"text": "[Choice A]", "outcome": "a"},
     {"text": "[Choice B]", "outcome": "b"},
@@ -184,352 +234,623 @@ Return ONLY valid JSON with no markdown:
       setCurrentScene(next);
       typewrite(next.narration);
     } else {
-      setError("Could not generate next scene. Try again.");
+      setError("Could not generate next scene. Please try again.");
     }
   }
+
+  const book = BOOKS[featured];
 
   return (
     <>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Raleway:wght@300;400;500;600&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900&family=EB+Garamond:ital,wght@0,400;0,500;1,400;1,500&family=Raleway:wght@300;400;500;600;700&display=swap');
+
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-        html { scroll-behavior: smooth; }
-        body { background: #080608; color: #f0ebe0; font-family: 'EB Garamond', serif; min-height: 100vh; overflow-x: hidden; }
+        html, body { height: 100%; }
+        body { background: #06050a; color: #f0ebe0; font-family: 'EB Garamond', serif; overflow-x: hidden; }
+
         :root {
           --gold: #c8a84b;
           --gold2: #e8c97a;
           --cream: #f0ebe0;
-          --dim: #7a6e5e;
-          --deep: #080608;
-          --border: rgba(200,168,75,0.2);
+          --dim: #6a5e4e;
+          --deep: #06050a;
+          --border: rgba(200,168,75,0.15);
         }
+
         ::-webkit-scrollbar { width: 3px; }
-        ::-webkit-scrollbar-track { background: #080608; }
+        ::-webkit-scrollbar-track { background: var(--deep); }
         ::-webkit-scrollbar-thumb { background: var(--gold); }
 
-        /* NAV */
+        /* ── NAV ── */
         .nav {
-          position: fixed; top: 0; left: 0; right: 0; z-index: 500;
-          padding: 1.2rem 3rem;
+          position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+          padding: 1.5rem 4rem;
           display: flex; align-items: center; justify-content: space-between;
-          background: linear-gradient(to bottom, rgba(8,6,8,0.9) 0%, transparent 100%);
+          background: linear-gradient(180deg, rgba(6,5,10,0.95) 0%, transparent 100%);
         }
-        .logo { font-family: 'Playfair Display', serif; font-size: 1.4rem; font-weight: 900; letter-spacing: 0.2em; color: var(--cream); text-transform: uppercase; cursor: pointer; }
+        .logo {
+          font-family: 'Playfair Display', serif;
+          font-size: 1.5rem; font-weight: 900;
+          letter-spacing: 0.25em; color: var(--cream);
+          text-transform: uppercase; cursor: pointer;
+          text-decoration: none;
+        }
         .logo em { color: var(--gold); font-style: normal; }
-        .nav-tag { font-family: 'Raleway', sans-serif; font-size: 0.5rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--dim); }
-        .nav-btn { font-family: 'Raleway', sans-serif; font-size: 0.6rem; letter-spacing: 0.2em; text-transform: uppercase; background: none; border: 1px solid var(--border); color: var(--gold); padding: 0.5rem 1.2rem; cursor: pointer; transition: all 0.2s; }
-        .nav-btn:hover { background: var(--gold); color: var(--deep); }
+        .logo-sub {
+          font-family: 'Raleway', sans-serif;
+          font-size: 0.5rem; letter-spacing: 0.4em;
+          text-transform: uppercase; color: var(--dim);
+          margin-top: 0.2rem;
+        }
+        .nav-right { display: flex; gap: 2rem; align-items: center; }
+        .nav-link {
+          font-family: 'Raleway', sans-serif;
+          font-size: 0.6rem; letter-spacing: 0.2em; text-transform: uppercase;
+          color: rgba(240,235,224,0.5); background: none; border: none;
+          cursor: pointer; transition: color 0.2s;
+        }
+        .nav-link:hover { color: var(--gold); }
+        .nav-cta {
+          font-family: 'Raleway', sans-serif;
+          font-size: 0.6rem; letter-spacing: 0.2em; text-transform: uppercase;
+          background: none; border: 1px solid var(--border);
+          color: var(--gold); padding: 0.5rem 1.2rem;
+          cursor: pointer; transition: all 0.2s;
+        }
+        .nav-cta:hover { background: var(--gold); color: var(--deep); }
 
-        /* HOME — CINEMATIC HERO */
-        .home { position: relative; min-height: 100vh; overflow: hidden; }
-
-        /* BACKGROUND LAYERS — cinematic crossfade */
-        .bg-layer {
+        /* ── HERO ── */
+        .hero {
+          position: relative; height: 100vh; overflow: hidden;
+        }
+        .hero-bg {
           position: absolute; inset: 0;
           background-size: cover; background-position: center;
-          transition: opacity 1.2s ease;
+          transition: opacity 2s ease;
+          filter: brightness(0.35) saturate(0.7) contrast(1.1);
         }
-        .bg-layer.visible { opacity: 1; }
-        .bg-layer.hidden { opacity: 0; }
+        .hero-bg.active { opacity: 1; }
+        .hero-bg.inactive { opacity: 0; }
 
-        /* CINEMATIC OVERLAYS */
-        .vignette {
-          position: absolute; inset: 0;
-          background: radial-gradient(ellipse at center, transparent 30%, rgba(8,6,8,0.85) 100%);
-          z-index: 1;
+        /* Letterbox */
+        .letterbox-t { position: absolute; top: 0; left: 0; right: 0; height: 7vh; background: #06050a; z-index: 2; }
+        .letterbox-b { position: absolute; bottom: 0; left: 0; right: 0; height: 7vh; background: #06050a; z-index: 2; }
+
+        /* Overlays */
+        .hero-vignette {
+          position: absolute; inset: 0; z-index: 1;
+          background: radial-gradient(ellipse at 60% 50%, transparent 20%, rgba(6,5,10,0.8) 100%);
         }
-        .bottom-grad {
-          position: absolute; bottom: 0; left: 0; right: 0; height: 70%;
-          background: linear-gradient(to top, #080608 0%, transparent 100%);
-          z-index: 2;
+        .hero-left-fade {
+          position: absolute; inset: 0; z-index: 1;
+          background: linear-gradient(90deg, rgba(6,5,10,0.95) 0%, rgba(6,5,10,0.4) 50%, transparent 100%);
         }
-        .top-grad {
-          position: absolute; top: 0; left: 0; right: 0; height: 30%;
-          background: linear-gradient(to bottom, rgba(8,6,8,0.6) 0%, transparent 100%);
-          z-index: 2;
+        .hero-bottom-fade {
+          position: absolute; bottom: 0; left: 0; right: 0; height: 50%; z-index: 1;
+          background: linear-gradient(0deg, #06050a 0%, transparent 100%);
         }
 
-        /* FILM GRAIN */
+        /* Grain texture */
         .grain {
-          position: absolute; inset: 0; z-index: 3; opacity: 0.04;
-          background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
-          pointer-events: none;
+          position: absolute; inset: 0; z-index: 2; opacity: 0.03; pointer-events: none;
+          background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E");
         }
 
-        /* LETTERBOX BARS */
-        .letterbox-top { position: absolute; top: 0; left: 0; right: 0; height: 6vh; background: #080608; z-index: 10; }
-        .letterbox-bot { position: absolute; bottom: 0; left: 0; right: 0; height: 6vh; background: #080608; z-index: 10; }
-
-        /* HERO CONTENT */
         .hero-content {
           position: relative; z-index: 5;
-          min-height: 100vh;
-          display: flex; flex-direction: column; justify-content: flex-end;
-          padding: 6vh 3rem 14vh;
+          height: 100%; display: flex; flex-direction: column;
+          justify-content: flex-end; padding: 0 4rem 10vh;
+          max-width: 680px;
         }
-        .hero-eyebrow {
+
+        .hero-badge {
           font-family: 'Raleway', sans-serif;
           font-size: 0.55rem; letter-spacing: 0.5em; text-transform: uppercase;
-          color: var(--gold); margin-bottom: 1.5rem; opacity: 0.8;
+          color: var(--gold); margin-bottom: 1.5rem;
+          display: flex; align-items: center; gap: 1rem; opacity: 0.9;
         }
+        .hero-badge::before { content: ''; width: 30px; height: 1px; background: var(--gold); opacity: 0.6; }
+
+        .hero-tagline {
+          font-family: 'Playfair Display', serif;
+          font-size: clamp(1rem, 2vw, 1.3rem);
+          font-style: italic; font-weight: 400;
+          color: var(--gold); opacity: 0.8;
+          letter-spacing: 0.05em; margin-bottom: 1rem;
+          line-height: 1.4;
+        }
+
         .hero-title {
           font-family: 'Playfair Display', serif;
-          font-size: clamp(4rem, 10vw, 9rem);
-          font-weight: 900; line-height: 0.88;
+          font-size: clamp(3.5rem, 7vw, 7rem);
+          font-weight: 900; line-height: 0.9;
           color: var(--cream); margin-bottom: 1.5rem;
-          text-shadow: 0 4px 60px rgba(0,0,0,0.8);
-          letter-spacing: -0.01em;
+          letter-spacing: -0.02em;
+          text-shadow: 0 4px 40px rgba(0,0,0,0.6);
         }
-        .hero-title em { font-style: italic; color: var(--gold); }
-        .hero-sub {
-          font-size: 1.1rem; line-height: 1.8; font-style: italic;
-          color: rgba(240,235,224,0.55); max-width: 480px; margin-bottom: 3rem;
+
+        .hero-desc {
+          font-size: clamp(0.95rem, 1.5vw, 1.1rem);
+          line-height: 1.85; font-style: italic;
+          color: rgba(240,235,224,0.55);
+          max-width: 460px; margin-bottom: 2.5rem;
         }
-        .hero-actions { display: flex; gap: 1rem; flex-wrap: wrap; align-items: center; }
-        .btn-gold {
-          font-family: 'Raleway', sans-serif; font-size: 0.7rem; letter-spacing: 0.25em; text-transform: uppercase;
-          background: var(--gold); color: #080608; border: none; padding: 1rem 2.5rem; cursor: pointer;
-          transition: all 0.2s; font-weight: 600;
+
+        .hero-quote {
+          font-family: 'Playfair Display', serif;
+          font-size: 0.9rem; font-style: italic;
+          color: rgba(200,168,75,0.6);
+          border-left: 2px solid rgba(200,168,75,0.3);
+          padding-left: 1rem; margin-bottom: 2.5rem;
+          max-width: 380px; line-height: 1.6;
         }
-        .btn-gold:hover { background: var(--gold2); transform: translateY(-2px); }
-        .btn-outline {
-          font-family: 'Raleway', sans-serif; font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase;
-          background: none; color: rgba(240,235,224,0.6); border: 1px solid rgba(240,235,224,0.2);
+
+        .hero-actions { display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; }
+
+        .btn-watch {
+          font-family: 'Raleway', sans-serif;
+          font-size: 0.7rem; font-weight: 700;
+          letter-spacing: 0.2em; text-transform: uppercase;
+          background: var(--gold); color: #06050a;
+          border: none; padding: 1rem 2.5rem;
+          cursor: pointer; transition: all 0.25s;
+          display: flex; align-items: center; gap: 0.6rem;
+        }
+        .btn-watch:hover { background: var(--gold2); transform: translateY(-2px); box-shadow: 0 8px 30px rgba(200,168,75,0.3); }
+
+        .btn-browse {
+          font-family: 'Raleway', sans-serif;
+          font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase;
+          background: rgba(240,235,224,0.06); color: rgba(240,235,224,0.7);
+          border: 1px solid rgba(240,235,224,0.15);
           padding: 1rem 1.8rem; cursor: pointer; transition: all 0.2s;
         }
-        .btn-outline:hover { border-color: var(--gold); color: var(--gold); }
+        .btn-browse:hover { border-color: var(--gold); color: var(--gold); background: rgba(200,168,75,0.06); }
 
-        /* BOOK TICKER — current feature */
-        .feature-tag {
-          position: absolute; bottom: 10vh; right: 3rem; z-index: 5;
-          text-align: right;
+        /* Feature info — right side */
+        .hero-info {
+          position: absolute; right: 4rem; bottom: 10vh; z-index: 5;
+          text-align: right; max-width: 200px;
         }
-        .ft-label { font-family: 'Raleway', sans-serif; font-size: 0.5rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--dim); margin-bottom: 0.4rem; }
-        .ft-title { font-family: 'Playfair Display', serif; font-size: 1.2rem; font-style: italic; color: var(--cream); }
-        .ft-author { font-family: 'Raleway', sans-serif; font-size: 0.6rem; color: var(--dim); margin-top: 0.2rem; }
+        .hi-label {
+          font-family: 'Raleway', sans-serif;
+          font-size: 0.5rem; letter-spacing: 0.35em; text-transform: uppercase;
+          color: var(--dim); margin-bottom: 0.5rem;
+        }
+        .hi-title {
+          font-family: 'Playfair Display', serif;
+          font-size: 1rem; font-style: italic; color: var(--cream);
+          line-height: 1.2; margin-bottom: 0.3rem;
+        }
+        .hi-author {
+          font-family: 'Raleway', sans-serif;
+          font-size: 0.55rem; letter-spacing: 0.1em; color: var(--dim);
+        }
 
-        /* PROGRESS DOTS */
-        .hero-dots { position: absolute; bottom: 10vh; left: 3rem; z-index: 5; display: flex; gap: 8px; align-items: center; }
-        .hdot { width: 24px; height: 2px; background: rgba(200,168,75,0.25); transition: all 0.5s; }
-        .hdot.on { background: var(--gold); width: 40px; }
+        /* Dots */
+        .hero-dots {
+          position: absolute; left: 4rem; bottom: 4vh; z-index: 5;
+          display: flex; gap: 6px; align-items: center;
+        }
+        .dot { width: 20px; height: 2px; background: rgba(200,168,75,0.2); transition: all 0.5s; }
+        .dot.on { background: var(--gold); width: 40px; }
 
-        /* MARQUEE */
-        .marquee { background: var(--gold); padding: 0.65rem 0; overflow: hidden; position: relative; z-index: 20; }
-        .marquee-track { display: flex; gap: 2.5rem; animation: march 40s linear infinite; white-space: nowrap; }
-        .marquee-track span { font-family: 'Raleway', sans-serif; font-size: 0.55rem; letter-spacing: 0.3em; text-transform: uppercase; color: rgba(8,6,8,0.7); font-weight: 600; }
-        .marquee-track span::before { content: '✦  '; }
+        /* ── MARQUEE ── */
+        .marquee-wrap {
+          background: var(--gold); padding: 0.7rem 0;
+          overflow: hidden; position: relative; z-index: 10;
+        }
+        .marquee-inner {
+          display: flex; gap: 3rem;
+          animation: march 45s linear infinite;
+          white-space: nowrap;
+        }
+        .marquee-inner span {
+          font-family: 'Raleway', sans-serif;
+          font-size: 0.55rem; letter-spacing: 0.3em;
+          text-transform: uppercase; color: rgba(6,5,10,0.6);
+          font-weight: 600;
+        }
+        .marquee-inner span::before { content: '✦  '; }
         @keyframes march { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 
-        /* ABOUT STRIP */
-        .about { display: flex; min-height: 50vh; }
-        .about-text { flex: 1; padding: 5rem 3rem; display: flex; flex-direction: column; justify-content: center; background: #0d0b0f; }
-        .about-eyebrow { font-family: 'Raleway', sans-serif; font-size: 0.55rem; letter-spacing: 0.4em; text-transform: uppercase; color: var(--gold); margin-bottom: 1.5rem; display: flex; align-items: center; gap: 1rem; }
-        .about-eyebrow::before { content: ''; width: 30px; height: 1px; background: var(--gold); }
-        .about-h2 { font-family: 'Playfair Display', serif; font-size: clamp(1.8rem, 3vw, 2.8rem); font-weight: 700; line-height: 1.2; color: var(--cream); margin-bottom: 1.2rem; }
-        .about-p { font-size: 1.05rem; line-height: 1.9; color: var(--dim); font-style: italic; max-width: 480px; }
-        .about-visual { flex: 1; position: relative; overflow: hidden; min-height: 300px; }
-        .about-imgs { position: absolute; inset: 0; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 2px; }
-        .about-img { background-size: cover; background-position: center; filter: sepia(0.3) brightness(0.7); }
-
-        /* BOOKS GRID */
-        .books-section { background: var(--deep); }
-        .books-head { padding: 4rem 3rem 2rem; display: flex; align-items: baseline; justify-content: space-between; }
-        .books-h2 { font-family: 'Playfair Display', serif; font-size: 2.5rem; font-weight: 700; color: var(--cream); }
-        .books-count { font-family: 'Raleway', sans-serif; font-size: 0.6rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--dim); }
-        .books-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 1px; background: rgba(200,168,75,0.08); }
-        .bcard { position: relative; overflow: hidden; cursor: pointer; aspect-ratio: 2/3; }
-        .bcard-img { position: absolute; inset: 0; background-size: cover; background-position: center; filter: brightness(0.45) saturate(0.6); transition: transform 0.7s ease, filter 0.5s; }
-        .bcard:hover .bcard-img { transform: scale(1.08); filter: brightness(0.25) saturate(0.4); }
-        .bcard-grad { position: absolute; inset: 0; background: linear-gradient(to top, rgba(8,6,8,0.98) 0%, rgba(8,6,8,0.2) 60%, transparent 100%); }
+        /* ── FEATURED BOOKS ROW ── */
+        .featured-row {
+          background: #09080e; padding: 4rem 0; overflow: hidden;
+        }
+        .featured-head {
+          padding: 0 4rem 2rem;
+          display: flex; align-items: baseline; justify-content: space-between;
+        }
+        .featured-title {
+          font-family: 'Playfair Display', serif;
+          font-size: 1.4rem; font-weight: 700; color: var(--cream);
+        }
+        .featured-sub {
+          font-family: 'Raleway', sans-serif;
+          font-size: 0.55rem; letter-spacing: 0.2em; text-transform: uppercase;
+          color: var(--dim);
+        }
+        .books-row {
+          display: flex; gap: 1px; padding: 0;
+          overflow-x: auto; scrollbar-width: none;
+        }
+        .books-row::-webkit-scrollbar { display: none; }
+        .bcard {
+          flex: 0 0 220px; position: relative;
+          overflow: hidden; cursor: pointer;
+          aspect-ratio: 2/3; background: #0d0b14;
+        }
+        .bcard-img {
+          position: absolute; inset: 0;
+          background-size: cover; background-position: center;
+          filter: brightness(0.4) saturate(0.6);
+          transition: transform 0.8s cubic-bezier(0.25,0.46,0.45,0.94), filter 0.5s;
+        }
+        .bcard:hover .bcard-img { transform: scale(1.1); filter: brightness(0.2) saturate(0.4); }
+        .bcard-grad {
+          position: absolute; inset: 0;
+          background: linear-gradient(0deg, rgba(6,5,10,0.99) 0%, rgba(6,5,10,0.1) 60%, transparent 100%);
+        }
         .bcard-info { position: absolute; bottom: 0; left: 0; right: 0; padding: 1.2rem; }
-        .bcard-genre { font-family: 'Raleway', sans-serif; font-size: 0.5rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); margin-bottom: 0.4rem; opacity: 0.7; }
-        .bcard-title { font-family: 'Playfair Display', serif; font-size: 0.9rem; font-weight: 700; line-height: 1.2; color: var(--cream); margin-bottom: 0.2rem; }
-        .bcard-author { font-family: 'Raleway', sans-serif; font-size: 0.55rem; color: var(--dim); margin-bottom: 0.6rem; }
-        .bcard-quote { font-size: 0.78rem; font-style: italic; color: rgba(240,235,224,0.4); line-height: 1.5; opacity: 0; transform: translateY(6px); transition: all 0.3s; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-        .bcard:hover .bcard-quote { opacity: 1; transform: none; }
-        .bcard-cta { font-family: 'Raleway', sans-serif; font-size: 0.5rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); opacity: 0; transform: translateY(6px); transition: all 0.3s 0.05s; margin-top: 0.6rem; }
+        .bcard-genre {
+          font-family: 'Raleway', sans-serif;
+          font-size: 0.48rem; letter-spacing: 0.2em; text-transform: uppercase;
+          color: var(--gold); margin-bottom: 0.4rem; opacity: 0.7;
+        }
+        .bcard-name {
+          font-family: 'Playfair Display', serif;
+          font-size: 0.95rem; font-weight: 700;
+          line-height: 1.2; color: var(--cream); margin-bottom: 0.2rem;
+        }
+        .bcard-author {
+          font-family: 'Raleway', sans-serif;
+          font-size: 0.55rem; color: var(--dim); margin-bottom: 0.8rem;
+        }
+        .bcard-tagline {
+          font-family: 'Playfair Display', serif;
+          font-size: 0.78rem; font-style: italic;
+          color: rgba(240,235,224,0.4); line-height: 1.5;
+          opacity: 0; transform: translateY(8px);
+          transition: all 0.35s ease;
+        }
+        .bcard:hover .bcard-tagline { opacity: 1; transform: none; }
+        .bcard-cta {
+          font-family: 'Raleway', sans-serif;
+          font-size: 0.5rem; letter-spacing: 0.2em; text-transform: uppercase;
+          color: var(--gold); opacity: 0; transform: translateY(8px);
+          transition: all 0.35s ease 0.05s; margin-top: 0.5rem;
+        }
         .bcard:hover .bcard-cta { opacity: 1; transform: none; }
 
-        /* FOOTER */
-        .footer { background: #04030a; border-top: 1px solid var(--border); padding: 3rem; text-align: center; }
-        .footer-logo { font-family: 'Playfair Display', serif; font-size: 2rem; font-weight: 900; letter-spacing: 0.25em; color: rgba(240,235,224,0.15); margin-bottom: 0.8rem; }
-        .footer-text { font-family: 'Raleway', sans-serif; font-size: 0.55rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--dim); opacity: 0.5; }
-
-        /* EXPERIENCE — CINEMATIC */
-        .exp { position: fixed; inset: 0; z-index: 400; background: #080608; display: flex; flex-direction: column; overflow-y: auto; }
-        .exp-cinematic { position: relative; height: 45vh; min-height: 260px; overflow: hidden; flex-shrink: 0; }
-        .exp-bg { position: absolute; inset: 0; background-size: cover; background-position: center; filter: brightness(0.3) saturate(0.5); }
-        .exp-vignette { position: absolute; inset: 0; background: radial-gradient(ellipse at center, transparent 20%, rgba(8,6,8,0.7) 100%); }
-        .exp-grad { position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(8,6,8,0.3) 0%, #080608 100%); }
-        .exp-bars-t { position: absolute; top: 0; left: 0; right: 0; height: 5vh; background: #080608; }
-        .exp-bars-b { position: absolute; bottom: 0; left: 0; right: 0; height: 2px; background: var(--gold); opacity: 0.3; }
-        .exp-topnav { position: absolute; top: 5vh; left: 0; right: 0; padding: 1rem 2.5rem; display: flex; justify-content: space-between; align-items: center; z-index: 2; }
-        .exp-title-label { font-family: 'Playfair Display', serif; font-size: 1.1rem; font-style: italic; color: rgba(240,235,224,0.8); }
-        .exp-back { font-family: 'Raleway', sans-serif; font-size: 0.55rem; letter-spacing: 0.2em; text-transform: uppercase; border: 1px solid rgba(240,235,224,0.2); color: rgba(240,235,224,0.5); background: rgba(8,6,8,0.5); padding: 0.4rem 1rem; cursor: pointer; transition: all 0.2s; }
-        .exp-back:hover { border-color: var(--gold); color: var(--gold); }
-        .exp-prog-wrap { position: absolute; bottom: 1.5rem; left: 2.5rem; right: 2.5rem; display: flex; gap: 4px; align-items: center; z-index: 2; }
-        .exp-prog-bar { height: 2px; flex: 1; background: rgba(240,235,224,0.15); transition: background 0.4s; }
-        .exp-prog-bar.done { background: rgba(240,235,224,0.4); }
-        .exp-prog-bar.act { background: var(--gold); }
-        .exp-prog-label { font-family: 'Raleway', sans-serif; font-size: 0.5rem; letter-spacing: 0.15em; text-transform: uppercase; color: rgba(240,235,224,0.3); margin-left: 0.8rem; }
-        .exp-scene-header {
-          position: absolute; bottom: 4rem; left: 2.5rem; z-index: 2;
+        /* ── CINEMATIC EXPERIENCE ── */
+        .exp {
+          position: fixed; inset: 0; z-index: 900;
+          background: #06050a;
+          display: flex; flex-direction: column;
+          overflow-y: auto;
         }
-        .exp-scene-eye { font-family: 'Raleway', sans-serif; font-size: 0.5rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--gold); opacity: 0.7; margin-bottom: 0.3rem; }
-        .exp-scene-title { font-family: 'Playfair Display', serif; font-size: 1.6rem; font-weight: 700; color: var(--cream); text-shadow: 0 2px 20px rgba(0,0,0,0.8); }
 
-        /* CINEMATIC TEXT AREA */
-        .exp-body { flex: 1; padding: 2.5rem; max-width: 760px; width: 100%; margin: 0 auto; }
+        /* Film header */
+        .exp-film {
+          position: relative; height: 42vh; min-height: 250px;
+          overflow: hidden; flex-shrink: 0;
+        }
+        .exp-film-bg {
+          position: absolute; inset: 0;
+          background-size: cover; background-position: center;
+          filter: brightness(0.25) saturate(0.5) contrast(1.1);
+        }
+        .exp-film-grain {
+          position: absolute; inset: 0; opacity: 0.05; pointer-events: none;
+          background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
+        }
+        .exp-film-overlay {
+          position: absolute; inset: 0;
+          background: linear-gradient(180deg, rgba(6,5,10,0.4) 0%, #06050a 100%);
+        }
+        .exp-film-top { position: absolute; top: 0; left: 0; right: 0; height: 6vh; background: #06050a; }
+        .exp-film-line { position: absolute; bottom: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, var(--gold), transparent); opacity: 0.4; }
+
+        .exp-topbar {
+          position: absolute; top: 6vh; left: 0; right: 0;
+          padding: 1rem 3rem;
+          display: flex; justify-content: space-between; align-items: center;
+          z-index: 2;
+        }
+        .exp-book-name {
+          font-family: 'Playfair Display', serif;
+          font-size: 1.1rem; font-style: italic;
+          color: rgba(240,235,224,0.7);
+        }
+        .exp-back {
+          font-family: 'Raleway', sans-serif;
+          font-size: 0.55rem; letter-spacing: 0.2em; text-transform: uppercase;
+          border: 1px solid rgba(240,235,224,0.15);
+          color: rgba(240,235,224,0.4);
+          background: rgba(6,5,10,0.5);
+          padding: 0.4rem 1rem; cursor: pointer; transition: all 0.2s;
+        }
+        .exp-back:hover { border-color: var(--gold); color: var(--gold); }
+
+        .exp-scene-info {
+          position: absolute; bottom: 3rem; left: 3rem; z-index: 2;
+        }
+        .exp-scene-eye {
+          font-family: 'Raleway', sans-serif;
+          font-size: 0.5rem; letter-spacing: 0.35em; text-transform: uppercase;
+          color: var(--gold); opacity: 0.7; margin-bottom: 0.4rem;
+        }
+        .exp-scene-name {
+          font-family: 'Playfair Display', serif;
+          font-size: 1.8rem; font-weight: 900;
+          color: var(--cream);
+          text-shadow: 0 2px 20px rgba(0,0,0,0.8);
+          line-height: 1.1;
+        }
+
+        .exp-prog {
+          position: absolute; bottom: 1.2rem; left: 3rem; right: 3rem;
+          display: flex; gap: 4px; align-items: center; z-index: 2;
+        }
+        .pbar { height: 2px; flex: 1; background: rgba(240,235,224,0.1); transition: background 0.5s; }
+        .pbar.done { background: rgba(240,235,224,0.35); }
+        .pbar.act { background: var(--gold); }
+        .plabel {
+          font-family: 'Raleway', sans-serif;
+          font-size: 0.48rem; letter-spacing: 0.15em; text-transform: uppercase;
+          color: rgba(240,235,224,0.25); margin-left: 1rem;
+        }
+
+        /* Story body */
+        .exp-body {
+          flex: 1; padding: 3rem;
+          max-width: 780px; width: 100%; margin: 0 auto;
+        }
+
         .exp-opening {
           font-family: 'Playfair Display', serif;
-          font-size: 1rem; font-style: italic;
-          color: var(--gold); opacity: 0.7;
+          font-size: 1.1rem; font-style: italic;
+          color: var(--gold); opacity: 0.75;
+          line-height: 1.6; margin-bottom: 2rem;
+          padding-left: 1.2rem;
           border-left: 2px solid rgba(200,168,75,0.3);
-          padding-left: 1rem; margin-bottom: 1.8rem; line-height: 1.7;
         }
+
         .exp-narration {
           font-family: 'EB Garamond', serif;
-          font-size: 1.15rem; line-height: 2; color: var(--cream);
-          opacity: 0.9; margin-bottom: 2rem;
-          min-height: 8rem;
+          font-size: 1.2rem; line-height: 2.1;
+          color: rgba(240,235,224,0.9);
+          margin-bottom: 3rem; min-height: 7rem;
+          letter-spacing: 0.01em;
         }
-        .cursor { display: inline-block; width: 2px; height: 1.1em; background: var(--gold); margin-left: 2px; animation: blink 1s step-end infinite; vertical-align: text-bottom; }
-        @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
-        .choice-divider { display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem; }
-        .choice-line { flex: 1; height: 1px; background: var(--border); }
-        .choice-q { font-family: 'Raleway', sans-serif; font-size: 0.55rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--gold); }
-        .choices { display: flex; flex-direction: column; gap: 8px; margin-bottom: 2rem; }
-        .choice-btn {
-          background: rgba(255,255,255,0.02); border: 1px solid rgba(200,168,75,0.12);
-          padding: 1rem 1.3rem; font-family: 'EB Garamond', serif; font-size: 1rem;
-          color: var(--cream); cursor: pointer; text-align: left; line-height: 1.7;
-          transition: all 0.25s; position: relative; overflow: hidden;
-        }
-        .choice-btn::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 0; background: rgba(200,168,75,0.08); transition: width 0.3s; }
-        .choice-btn:hover::before { width: 100%; }
-        .choice-btn:hover { border-color: var(--gold); padding-left: 2rem; }
-        .choice-arrow { position: absolute; left: 0.8rem; top: 50%; transform: translateY(-50%); color: var(--gold); opacity: 0; transition: opacity 0.2s; font-size: 0.8rem; }
-        .choice-btn:hover .choice-arrow { opacity: 1; }
-        .orig-tag { display: block; font-family: 'Raleway', sans-serif; font-size: 0.5rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); opacity: 0.5; margin-bottom: 0.3rem; }
-        .loading-cine { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 4rem 0; gap: 1.5rem; }
-        .cine-spinner { width: 40px; height: 40px; border: 1px solid rgba(200,168,75,0.2); border-top-color: var(--gold); border-radius: 50%; animation: spin 1s linear infinite; }
-        @keyframes spin { to { transform: rotate(360deg); } }
-        .cine-loading-text { font-family: 'Playfair Display', serif; font-style: italic; color: var(--dim); font-size: 1rem; }
-        .path-crumb { font-family: 'Raleway', sans-serif; font-size: 0.5rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--dim); border: 1px solid var(--border); padding: 0.25rem 0.8rem; display: inline-block; margin-bottom: 1.5rem; }
-        .error-msg { background: rgba(180,60,60,0.08); border: 1px solid rgba(180,60,60,0.3); padding: 1.5rem; color: #c07070; font-family: 'Raleway', sans-serif; font-size: 0.8rem; line-height: 1.7; margin-bottom: 1rem; }
-        .end-card { background: rgba(200,168,75,0.04); border: 1px solid var(--border); padding: 2.5rem; }
-        .end-label { font-family: 'Raleway', sans-serif; font-size: 0.5rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--gold); margin-bottom: 0.8rem; }
-        .end-title { font-family: 'Playfair Display', serif; font-size: 2rem; font-weight: 700; color: var(--cream); margin-bottom: 1.2rem; }
-        .end-text { font-size: 1.1rem; line-height: 1.95; font-style: italic; color: var(--dim); margin-bottom: 2rem; }
-        .end-actions { display: flex; gap: 0.8rem; flex-wrap: wrap; }
-        .end-btn { font-family: 'Raleway', sans-serif; font-size: 0.6rem; letter-spacing: 0.2em; text-transform: uppercase; padding: 0.7rem 1.5rem; cursor: pointer; transition: all 0.2s; }
-        .end-btn.pri { background: var(--gold); color: var(--deep); border: none; }
-        .end-btn.pri:hover { background: var(--gold2); }
-        .end-btn.sec { background: none; border: 1px solid var(--border); color: var(--dim); }
-        .end-btn.sec:hover { border-color: var(--gold); color: var(--gold); }
 
-        @media (max-width: 1000px) { .books-grid { grid-template-columns: repeat(3, 1fr); } }
-        @media (max-width: 700px) {
-          .books-grid { grid-template-columns: repeat(2, 1fr); }
-          .about { flex-direction: column; }
-          .nav { padding: 1rem 1.5rem; }
-          .hero-content { padding: 6vh 1.5rem 14vh; }
+        .cursor {
+          display: inline-block; width: 2px; height: 1.1em;
+          background: var(--gold); margin-left: 3px;
+          animation: blink 1s step-end infinite;
+          vertical-align: text-bottom;
+        }
+        @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+        .choice-divider {
+          display: flex; align-items: center; gap: 1.5rem; margin-bottom: 1.2rem;
+        }
+        .choice-line { flex: 1; height: 1px; background: var(--border); }
+        .choice-label {
+          font-family: 'Raleway', sans-serif;
+          font-size: 0.55rem; letter-spacing: 0.35em; text-transform: uppercase;
+          color: var(--gold); white-space: nowrap;
+        }
+
+        .choices { display: flex; flex-direction: column; gap: 8px; margin-bottom: 3rem; }
+
+        .choice-btn {
+          position: relative; overflow: hidden;
+          background: rgba(240,235,224,0.02);
+          border: 1px solid rgba(200,168,75,0.1);
+          padding: 1.1rem 1.4rem 1.1rem 2.8rem;
+          font-family: 'EB Garamond', serif;
+          font-size: 1.05rem; color: rgba(240,235,224,0.85);
+          cursor: pointer; text-align: left; line-height: 1.7;
+          transition: all 0.25s;
+        }
+        .choice-btn:hover {
+          border-color: rgba(200,168,75,0.5);
+          background: rgba(200,168,75,0.05);
+          color: var(--cream);
+        }
+        .choice-arr {
+          position: absolute; left: 1rem; top: 1.2rem;
+          color: var(--gold); font-size: 0.85rem; opacity: 0.4;
+          transition: opacity 0.2s, transform 0.2s;
+        }
+        .choice-btn:hover .choice-arr { opacity: 1; transform: translateX(3px); }
+        .orig-flag {
+          display: block; font-family: 'Raleway', sans-serif;
+          font-size: 0.48rem; letter-spacing: 0.2em; text-transform: uppercase;
+          color: var(--gold); opacity: 0.5; margin-bottom: 0.3rem;
+        }
+
+        .path-tag {
+          font-family: 'Raleway', sans-serif;
+          font-size: 0.5rem; letter-spacing: 0.1em; text-transform: uppercase;
+          color: var(--dim); border: 1px solid var(--border);
+          padding: 0.3rem 0.9rem; display: inline-block; margin-bottom: 1.8rem;
+          background: rgba(200,168,75,0.03);
+        }
+
+        .loading-wrap {
+          display: flex; flex-direction: column;
+          align-items: center; justify-content: center;
+          padding: 5rem 0; gap: 1.5rem;
+        }
+        .spinner {
+          width: 44px; height: 44px;
+          border: 1px solid rgba(200,168,75,0.15);
+          border-top-color: var(--gold);
+          border-radius: 50%;
+          animation: spin 1s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .loading-label {
+          font-family: 'Playfair Display', serif;
+          font-style: italic; color: var(--dim); font-size: 1rem;
+        }
+
+        .error-wrap {
+          background: rgba(160,60,60,0.07);
+          border: 1px solid rgba(160,60,60,0.3);
+          padding: 1.5rem 2rem; margin-bottom: 2rem;
+          font-family: 'Raleway', sans-serif;
+          font-size: 0.75rem; line-height: 1.8;
+          color: #b07070;
+        }
+
+        .end-card {
+          background: rgba(200,168,75,0.04);
+          border: 1px solid var(--border); padding: 3rem;
+        }
+        .end-eyebrow {
+          font-family: 'Raleway', sans-serif;
+          font-size: 0.5rem; letter-spacing: 0.4em; text-transform: uppercase;
+          color: var(--gold); margin-bottom: 1rem;
+        }
+        .end-title {
+          font-family: 'Playfair Display', serif;
+          font-size: 2.2rem; font-weight: 900;
+          color: var(--cream); margin-bottom: 1.2rem; line-height: 1.1;
+        }
+        .end-text {
+          font-size: 1.1rem; line-height: 2; font-style: italic;
+          color: rgba(240,235,224,0.6); margin-bottom: 2.5rem;
+        }
+        .end-actions { display: flex; gap: 1rem; flex-wrap: wrap; }
+        .end-btn {
+          font-family: 'Raleway', sans-serif;
+          font-size: 0.6rem; letter-spacing: 0.2em; text-transform: uppercase;
+          padding: 0.8rem 1.8rem; cursor: pointer; transition: all 0.2s;
+        }
+        .end-pri { background: var(--gold); color: var(--deep); border: none; }
+        .end-pri:hover { background: var(--gold2); transform: translateY(-1px); }
+        .end-sec { background: none; border: 1px solid var(--border); color: var(--dim); }
+        .end-sec:hover { border-color: var(--gold); color: var(--gold); }
+
+        /* ── FOOTER ── */
+        .footer {
+          background: #04030a; border-top: 1px solid var(--border);
+          padding: 4rem; text-align: center;
+        }
+        .footer-logo {
+          font-family: 'Playfair Display', serif;
+          font-size: 2.5rem; font-weight: 900;
+          letter-spacing: 0.3em; color: rgba(240,235,224,0.08);
+          margin-bottom: 1rem;
+        }
+        .footer-text {
+          font-family: 'Raleway', sans-serif;
+          font-size: 0.55rem; letter-spacing: 0.3em;
+          text-transform: uppercase; color: var(--dim); opacity: 0.4;
+        }
+
+        @media (max-width: 768px) {
+          .nav { padding: 1.2rem 1.5rem; }
+          .hero-content { padding: 0 1.5rem 10vh; }
+          .hero-info { display: none; }
           .exp-body { padding: 1.5rem; }
+          .exp-topbar { padding: 1rem 1.5rem; }
+          .exp-scene-info { left: 1.5rem; }
+          .exp-prog { left: 1.5rem; right: 1.5rem; }
+          .featured-head { padding: 0 1.5rem 1.5rem; }
         }
       `}</style>
 
-      {/* NAV */}
+      {/* ── NAV ── */}
       <nav className="nav">
         <div onClick={() => setPage("home")} style={{cursor:"pointer"}}>
           <div className="logo">UN<em>DECIDED</em></div>
-          <div className="nav-tag">Interactive Cinematic Literature</div>
+          <div className="logo-sub">Interactive Cinematic Literature</div>
         </div>
-        <button className="nav-btn" onClick={() => setPage("library")}>The Library →</button>
+        <div className="nav-right">
+          <button className="nav-link" onClick={() => setPage("library")}>Library</button>
+          <button className="nav-cta" onClick={() => openBook(BOOKS[0])}>▶ Watch Now</button>
+        </div>
       </nav>
 
-      {/* HOME */}
-      {page === "home" && (
+      {/* ── HOME ── */}
+      {(page === "home" || page === "library") && (
         <>
-          <div className="home">
-            {/* Cinematic background crossfade */}
-            {CINEMATIC_IMAGES.map((img, i) => (
-              <div key={i} className={`bg-layer ${i === bgIdx ? "visible" : "hidden"}`}
-                style={{ backgroundImage: `url(${img})`, filter: "brightness(0.45) saturate(0.6) contrast(1.1)" }} />
+          {/* HERO */}
+          <div className="hero">
+            {HERO_IMAGES.map((img, i) => (
+              <div key={i} className={`hero-bg ${i === bgIdx ? "active" : "inactive"}`}
+                style={{ backgroundImage: `url(${img})` }} />
             ))}
-            <div className="vignette" />
-            <div className="bottom-grad" />
-            <div className="top-grad" />
+            <div className="letterbox-t" />
+            <div className="letterbox-b" />
+            <div className="hero-vignette" />
+            <div className="hero-left-fade" />
+            <div className="hero-bottom-fade" />
             <div className="grain" />
-            <div className="letterbox-top" />
-            <div className="letterbox-bot" />
 
             <div className="hero-content">
-              <div className="hero-eyebrow">Interactive Cinematic Adaptations</div>
-              <h1 className="hero-title">
-                The classics,<br /><em>reborn.</em>
-              </h1>
-              <p className="hero-sub">
-                Pick a novel. Watch it come alive. Shape what happens next.
-              </p>
+              <div className="hero-badge">{book.genre}</div>
+              <div className="hero-tagline">{book.tagline}</div>
+              <h1 className="hero-title">{book.title}</h1>
+              <p className="hero-desc">{book.description}</p>
+              <div className="hero-quote">"{book.quote}"</div>
               <div className="hero-actions">
-                <button className="btn-gold" onClick={() => openBook(BOOKS[0])}>▶ Watch Monte Cristo</button>
-                <button className="btn-outline" onClick={() => setPage("library")}>Browse the Library</button>
+                <button className="btn-watch" onClick={() => openBook(book)}>
+                  ▶ Watch Now
+                </button>
+                <button className="btn-browse" onClick={() => {
+                  document.getElementById('library')?.scrollIntoView({behavior:'smooth'});
+                }}>
+                  All Books
+                </button>
               </div>
             </div>
 
-            <div className="feature-tag">
-              <div className="ft-label">Now Showing</div>
-              <div className="ft-title">{BOOKS[bgIdx % BOOKS.length].title}</div>
-              <div className="ft-author">{BOOKS[bgIdx % BOOKS.length].author}</div>
+            <div className="hero-info">
+              <div className="hi-label">Now Showing</div>
+              <div className="hi-title">{book.title}</div>
+              <div className="hi-author">{book.author} · {book.year}</div>
             </div>
 
             <div className="hero-dots">
-              {[0,1,2,3,4,5].map(i => (
-                <div key={i} className={`hdot ${i === bgIdx % 6 ? "on" : ""}`} />
+              {BOOKS.map((_, i) => (
+                <div key={i} className={`dot ${i === featured ? "on" : ""}`} />
               ))}
             </div>
           </div>
 
           {/* MARQUEE */}
-          <div className="marquee">
-            <div className="marquee-track">
-              {[...BOOKS, ...BOOKS].map((b, i) => <span key={i}>{b.title}</span>)}
-            </div>
-          </div>
-
-          {/* ABOUT */}
-          <div className="about">
-            <div className="about-text">
-              <div className="about-eyebrow">The Experience</div>
-              <h2 className="about-h2">Not a summary.<br />A film you control.</h2>
-              <p className="about-p">Every scene unfolds before you like a Hollywood adaptation — vivid, cinematic, psychologically true. At key moments, you decide what happens. Follow the original author's path, or write your own.</p>
-            </div>
-            <div className="about-visual">
-              <div className="about-imgs">
-                {CINEMATIC_IMAGES.slice(0,4).map((img, i) => (
-                  <div key={i} className="about-img" style={{ backgroundImage: `url(${img})` }} />
-                ))}
-              </div>
+          <div className="marquee-wrap">
+            <div className="marquee-inner">
+              {[...BOOKS, ...BOOKS, ...BOOKS].map((b, i) => (
+                <span key={i}>{b.title}</span>
+              ))}
             </div>
           </div>
 
           {/* BOOKS */}
-          <div className="books-section">
-            <div className="books-head">
-              <div className="books-h2">The Library</div>
-              <div className="books-count">{BOOKS.length} masterworks</div>
+          <div className="featured-row" id="library">
+            <div className="featured-head">
+              <div className="featured-title">The Library</div>
+              <div className="featured-sub">{BOOKS.length} masterworks · choose your story</div>
             </div>
-            <div className="books-grid">
+            <div className="books-row">
               {BOOKS.map(b => (
                 <div key={b.id} className="bcard" onClick={() => openBook(b)}>
-                  <div className="bcard-img" style={{ backgroundImage: `url(${b.img})` }} />
+                  <div className="bcard-img" style={{ backgroundImage: `url(${b.painting})` }} />
                   <div className="bcard-grad" />
                   <div className="bcard-info">
                     <div className="bcard-genre">{b.genre}</div>
-                    <div className="bcard-title">{b.title}</div>
+                    <div className="bcard-name">{b.title}</div>
                     <div className="bcard-author">{b.author} · {b.year}</div>
-                    <div className="bcard-quote">"{b.quote}"</div>
-                    <div className="bcard-cta">Watch now →</div>
+                    <div className="bcard-tagline">{b.tagline}</div>
+                    <div className="bcard-cta">▶ Watch now</div>
                   </div>
                 </div>
               ))}
@@ -538,83 +859,61 @@ Return ONLY valid JSON with no markdown:
 
           <footer className="footer">
             <div className="footer-logo">UNDECIDED</div>
-            <div className="footer-text">Interactive cinematic adaptations · undecided.com</div>
+            <div className="footer-text">Interactive Cinematic Literature · undecided.com</div>
           </footer>
         </>
       )}
 
-      {/* LIBRARY PAGE */}
-      {page === "library" && (
-        <div style={{ paddingTop: "4rem", background: "var(--deep)", minHeight: "100vh" }}>
-          <div className="books-section">
-            <div className="books-head">
-              <div className="books-h2">The Library</div>
-              <div className="books-count">{BOOKS.length} masterworks · choose your story</div>
-            </div>
-            <div className="books-grid">
-              {BOOKS.map(b => (
-                <div key={b.id} className="bcard" onClick={() => openBook(b)}>
-                  <div className="bcard-img" style={{ backgroundImage: `url(${b.img})` }} />
-                  <div className="bcard-grad" />
-                  <div className="bcard-info">
-                    <div className="bcard-genre">{b.genre}</div>
-                    <div className="bcard-title">{b.title}</div>
-                    <div className="bcard-author">{b.author} · {b.year}</div>
-                    <div className="bcard-quote">"{b.quote}"</div>
-                    <div className="bcard-cta">Watch now →</div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* CINEMATIC EXPERIENCE */}
+      {/* ── CINEMATIC EXPERIENCE ── */}
       {page === "experience" && selectedBook && (
-        <div className="exp">
-          <div className="exp-cinematic">
-            <div className="exp-bg" style={{ backgroundImage: `url(${selectedBook.img})` }} />
-            <div className="exp-vignette" />
-            <div className="exp-grad" />
-            <div className="exp-bars-t" />
-            <div className="exp-bars-b" />
-            <div className="exp-topnav">
-              <div className="exp-title-label">{selectedBook.title}</div>
-              <button className="exp-back" onClick={() => setPage("library")}>← Library</button>
+        <div className="exp" ref={bodyRef}>
+          <div className="exp-film">
+            <div className="exp-film-bg" style={{ backgroundImage: `url(${selectedBook.painting})` }} />
+            <div className="exp-film-grain" />
+            <div className="exp-film-overlay" />
+            <div className="exp-film-top" />
+            <div className="exp-film-line" />
+
+            <div className="exp-topbar">
+              <div className="exp-book-name">{selectedBook.title}</div>
+              <button className="exp-back" onClick={() => setPage("home")}>← Library</button>
             </div>
-            {!ending && currentScene && (
-              <div className="exp-scene-header">
+
+            {currentScene && !ending && (
+              <div className="exp-scene-info">
                 <div className="exp-scene-eye">{currentScene.header}</div>
-                <div className="exp-scene-title">{currentScene.title}</div>
+                <div className="exp-scene-name">{currentScene.title}</div>
               </div>
             )}
+
             {!ending && (
-              <div className="exp-prog-wrap">
+              <div className="exp-prog">
                 {[0,1,2,3].map(i => (
-                  <div key={i} className={`exp-prog-bar ${i < sceneIndex ? "done" : i === sceneIndex ? "act" : ""}`} />
+                  <div key={i} className={`pbar ${i < sceneIndex ? "done" : i === sceneIndex ? "act" : ""}`} />
                 ))}
-                <span className="exp-prog-label">Scene {sceneIndex + 1} / 4</span>
+                <span className="plabel">Scene {sceneIndex + 1} of 4</span>
               </div>
             )}
           </div>
 
           <div className="exp-body">
-            {loading && !currentScene && !ending && (
-              <div className="loading-cine">
-                <div className="cine-spinner" />
-                <div className="cine-loading-text">The story unfolds...</div>
+            {loading && (
+              <div className="loading-wrap">
+                <div className="spinner" />
+                <div className="loading-label">
+                  {ending ? "Writing your ending..." : "The story unfolds..."}
+                </div>
               </div>
             )}
 
-            {error && (
-              <div className="error-msg">⚠ {error}</div>
-            )}
+            {error && <div className="error-wrap">⚠ {error}</div>}
 
-            {currentScene && !ending && (
+            {currentScene && !loading && !ending && (
               <>
                 {choices.length > 0 && (
-                  <div className="path-crumb">Your path: {choices[choices.length-1].substring(0,65)}...</div>
+                  <div className="path-tag">
+                    Your path: {choices[choices.length-1].substring(0,70)}...
+                  </div>
                 )}
                 {currentScene.opening && (
                   <div className="exp-opening">"{currentScene.opening}"</div>
@@ -628,14 +927,14 @@ Return ONLY valid JSON with no markdown:
                   <>
                     <div className="choice-divider">
                       <div className="choice-line" />
-                      <div className="choice-q">{currentScene.choicePrompt}</div>
+                      <div className="choice-label">{currentScene.choicePrompt}</div>
                       <div className="choice-line" />
                     </div>
                     <div className="choices">
                       {currentScene.choices?.map((c, i) => (
                         <button key={i} className="choice-btn" onClick={() => makeChoice(c)}>
-                          <span className="choice-arrow">→</span>
-                          {c.original && <span className="orig-tag">The original path</span>}
+                          <span className="choice-arr">→</span>
+                          {c.original && <span className="orig-flag">The original path</span>}
                           {c.text}
                         </button>
                       ))}
@@ -645,14 +944,18 @@ Return ONLY valid JSON with no markdown:
               </>
             )}
 
-            {ending && (
+            {ending && !loading && (
               <div className="end-card">
-                <div className="end-label">Your ending · {selectedBook.title}</div>
+                <div className="end-eyebrow">Your Ending · {selectedBook.title}</div>
                 <div className="end-title">{ending.endingTitle}</div>
                 <div className="end-text">{ending.endingText}</div>
                 <div className="end-actions">
-                  <button className="end-btn pri" onClick={() => openBook(selectedBook)}>Another path →</button>
-                  <button className="end-btn sec" onClick={() => setPage("library")}>Choose another book</button>
+                  <button className="end-btn end-pri" onClick={() => openBook(selectedBook)}>
+                    Another Path →
+                  </button>
+                  <button className="end-btn end-sec" onClick={() => setPage("home")}>
+                    Choose Another Book
+                  </button>
                 </div>
               </div>
             )}
